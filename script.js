@@ -1,5 +1,5 @@
 //1
-makeObjectDeepCopy = function(obj) {
+const makeObjectDeepCopy = function(obj) {
     if (obj == null || typeof obj !== 'object') {
         return obj;
     }

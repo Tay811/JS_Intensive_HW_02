@@ -1,32 +1,55 @@
 //1
-function makeObjectDeepCopy(obj){
-  const clone = {};
-  for (let key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            if (typeof obj[key] === 'object') {
-                 if (obj[key] instanceof Array) {clone[key] = obj[key].slice();}
-                 else if (obj[key] instanceof Date) clone[key] = new Date(obj[key]);
-                 else clone[key] = obj[key];
-            }
-            else clone[key] = obj[key];
-        }
+makeObjectDeepCopy = function(obj) {
+    if (obj == null || typeof obj !== 'object') {
+        return obj;
     }
+  
+    if (obj instanceof Date) { return new Date(obj); }
+    if (obj instanceof String) { return new String(obj); }
+    if (obj instanceof Number) { return new Number(obj); }
+    if (obj instanceof Boolean) { return new Boolean(obj); }
+    if (obj instanceof RegExp) { return new RegExp(obj); }
+  
+  
+    var clone = {};
+    if (obj instanceof Array) {
+        clone = new Array(obj.length);
+    }
+  
+    for (var key in obj) {
+        if (typeof obj[key] === 'function') {
+            const that = obj[key];
+            let temp = function temporary() { return that.apply(this, arguments); };
+            
+            for(let k in obj[key]) {
+                if (this.hasOwnProperty(k)) {
+                    temp[k] = obj[key][k];
+                }
+            }
+            
+            clone[key] = temp;
+            continue;
+        }
+        
+        clone[key] = makeObjectDeepCopy(obj[key]);
+    }
+  
     return clone;
-}
+};
 
 
 //2
 function selectFromInterval(arr, a, b) {
   if (!Array.isArray(arr)) {
-      throw new Error('Ошибка!');
+      throw new Error('Ошибка! Первый аргумент невалидный');
   }
 
   if (isNaN(a)) {
-      throw new Error('Ошибка!');
+      throw new Error('Ошибка! Второй аргумент невалидный');
   }
 
   if (isNaN(b)) {
-      throw new Error('Ошибка!');
+      throw new Error('Ошибка! Третий аргумент невалидный');
   }
 
   if (b < a) {
